@@ -16,27 +16,32 @@ const gameboardModule = (() => {
         const allSpaces = document.querySelectorAll(".gameboard-space");
         allSpaces.forEach(space => space.remove());
     }
+
     return {gameboard, makeGameboard, resetGameboard}; 
 })();
-
-function createPlayer(name, symbol) {
-    return {name, symbol}
-}
-
-const player1 = createPlayer("Player1", "X");
-const player2 = createPlayer("Player2", "O");
 
 const gameController = (() => {
     const gameboard = gameboardModule.gameboard;
     let round = 0;
+    let winner = "";
+    let gameOver = false;
+
+    function playGame() {
+        if (gameOver === false) {
+            gameboardModule.resetGameboard();
+            gameboardModule.makeGameboard();
+            const spaces = document.querySelectorAll(".gameboard-space");
+            spaces.forEach(space => space.addEventListener("click", markSpace))
+        }
+    }
 
     function markSpace(e) {
         let targetSpace = gameboard[`${e.target.id}`];
-        if (targetSpace === "") {
-            if (round === 0 || round === 2 || round === 4 || round === 6 || round === 8) {
+        if (targetSpace === "" && round < 9) {
+            if (round === 0 || round % 2 === 0) {
                 targetSpace = player1.symbol;
                 gameboard[`${e.target.id}`] = targetSpace;
-            } else if (round === 1 || round === 3 || round === 5 || round === 7) {
+            } else if (round % 2 !== 0) {
                 targetSpace = player2.symbol;
                 gameboard[`${e.target.id}`] = targetSpace;
             }
@@ -44,18 +49,50 @@ const gameController = (() => {
             return;
         }
         round++;
+        checkWinner();
         playGame();
     }
 
-    function playGame() {
-        gameboardModule.resetGameboard();
-        gameboardModule.makeGameboard();
-        const spaces = document.querySelectorAll(".gameboard-space");
-        spaces.forEach(space => space.addEventListener("click", markSpace))
+    function checkWinner() {
+        if (round > 4 &&
+            ((gameboard[0] === gameboard[1] && gameboard[1] === gameboard[2] && gameboard[1] !== "") ||
+            (gameboard[3] === gameboard[4] && gameboard[4] === gameboard[5] && gameboard[4] !== "") ||
+            (gameboard[6] === gameboard[7] && gameboard[7] === gameboard[8] && gameboard[7] !== "") ||
+            (gameboard[0] === gameboard[3] && gameboard[3] === gameboard[6] && gameboard[3] !== "") ||
+            (gameboard[1] === gameboard[4] && gameboard[4] === gameboard[7] && gameboard[4] !== "") ||
+            (gameboard[2] === gameboard[5] && gameboard[5] === gameboard[8] && gameboard[5] !== "") ||
+            (gameboard[0] === gameboard[4] && gameboard[4] === gameboard[8] && gameboard[4] !== "") ||
+            (gameboard[2] === gameboard[4] && gameboard[4] === gameboard[6] && gameboard[4] !== ""))
+        ) {
+            gameOver = true;
+            if (round % 2 !== 0) {
+                winner = player1.name;
+            } else {
+                winner = player2.name;
+            }
+        } else if (round === 9 && winner === "") {
+            gameOver = true;
+            winner = "It's a draw!";
+        }
+
+        if (gameOver === true) {
+            gameboardModule.resetGameboard();
+            gameboardModule.makeGameboard();
+            displayWinner();
+            const spaces = document.querySelectorAll(".gameboard-space");
+            spaces.forEach(space => space.removeEventListener("click", markSpace))
+        }
+        return;
+    }
+
+    function displayWinner() {
+        console.log(winner);
     }
 
     function newGame() {
         round = 0;
+        winner = "";
+        gameOver = false;
         for (let i = 0; i < gameboard.length; i++) {
             gameboardModule.gameboard[i] = "";
         }
@@ -65,7 +102,14 @@ const gameController = (() => {
     const newGameButton = document.querySelector("#new-game-button");
     newGameButton.addEventListener("click", newGame);
 
-    return {playGame};
+    return {newGame};
 })();
 
-gameController.playGame();
+function createPlayer(name, symbol) {
+    return {name, symbol}
+}
+
+const player1 = createPlayer("Player1", "X");
+const player2 = createPlayer("Player2", "O");
+
+gameController.newGame();
