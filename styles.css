@@ -1,4 +1,61 @@
+@font-face {
+    font-family: 'robotoregular';
+    src: url('./Font/roboto-regular-webfont.woff2') format('woff2'),
+         url('./Font/roboto-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+    font-family: 'robotoregular', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    box-sizing: border-box;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+#header {
+    display: flex;
+    justify-content: center;
+    padding: 25px 0;
+}
+
+.header-text {
+    font-size: 36px;
+    font-weight: bold;
+}
+
 #gameboard-container {
     display: grid;
     grid-template: 1fr 1fr 1fr / 1fr 1fr 1fr;
+    margin: auto;
+    height: 600px;
+    width: 600px;
+    padding: 20px;
+    gap: 20px;
+    border: 5px solid gray;
+}
+
+.gameboard-space {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    background-color: gray;
+    font-size: 75px;
+    font-weight: bold;
+    transition: .15s;
+    border-style: none;
+}
+
+.gameboard-space:hover {
+    background-color: lightslategray;
+    transform: scale(1.1);
+}
+
+#new-game-button {
+    margin: auto;
 }
