@@ -86,7 +86,18 @@ const gameController = (() => {
     }
 
     function displayWinner() {
+        if (gameOver === true) {
+            const winnerContainer = document.querySelector(".winner-container");
+            const showWinner = document.querySelector(".display-winner");
+            if (winner !== "It's a draw!") {
+                showWinner.textContent = `${winner} is the winner!`;
+            } else {
+                showWinner.textContent = "It's a draw!";
+            }
+            winnerContainer.style.display = "block";
+        }
         console.log(winner);
+        return;
     }
 
     function newGame() {
@@ -96,11 +107,24 @@ const gameController = (() => {
         for (let i = 0; i < gameboard.length; i++) {
             gameboardModule.gameboard[i] = "";
         }
+        const winnerContainer = document.querySelector(".winner-container");
+        winnerContainer.style.display = "none";
         playGame();
     }
 
     const newGameButton = document.querySelector("#new-game-button");
     newGameButton.addEventListener("click", newGame);
+
+    const changeNamesButton = document.querySelector("#change-name-button");
+    changeNamesButton.addEventListener("click", () => {
+        player1.name = prompt("Enter name for Player 1: ");
+        player2.name = prompt("Enter name for Player 2: ");
+        const player1Name = document.querySelector(".player1");
+        const player2Name = document.querySelector(".player2");
+        player1Name.textContent = player1.name + ": " + player1.symbol;
+        player2Name.textContent = player2.name + ": " + player2.symbol;
+    })
+    
 
     return {newGame};
 })();
